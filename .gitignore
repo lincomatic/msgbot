@@ -1,5 +1,6 @@
 start.sh
 debug.sh
+env
 
 *~
 \#*#
