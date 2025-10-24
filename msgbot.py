@@ -101,7 +101,7 @@ def magic8():
     return answer
 
 # do commands incoming from mesh    
-async def do_mesh_commands(channel_idx,channel_name,user,msg):
+async def do_mesh_commands(payload,channel_idx,channel_name,user,msg):
     doit = False
     if channel_idx == CHNL_IDX_BOT:
         doit = True
@@ -115,7 +115,14 @@ async def do_mesh_commands(channel_idx,channel_name,user,msg):
         cmd = msg.lower()
 
         if cmd.startswith('test'):
-            resp = f"ack [{user}]{msg}"
+            timestamp = payload.get('sender_timestamp')
+#            snr = payload.get('SNR')
+            hops = payload.get('path_len')
+            text = payload.get('text')
+            elapsed = round((time.time()-timestamp)*1000)
+#            resp = f"ack [{user}]{msg}|SNR:{snr}|hops:{hops}|{elapsed}ms"
+            resp = f"ack [{user}]{msg}|SNR:{snr}|hops:{hops}|{elapsed}ms"
+            print(resp)
         elif cmd.startswith('magic8'):
             msg = magic8()
             resp = f"[{user}]{msg}"
@@ -197,7 +204,7 @@ async def mesh_listener () :
                 # Fire-and-forget to avoid blocking the receive loop
                 await send_to_discord(WEBHOOK_URL, webhook_message)
                 
-            await do_mesh_commands(channel_idx,channel_name,user,msg)
+            await do_mesh_commands(payload,channel_idx,channel_name,user,msg)
 
 
         else:
