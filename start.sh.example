@@ -1,0 +1,6 @@
+source bin/activate # for venv
+export MESHCORE_HOSTNAME=<your wifi companion>
+export DISCORD_WEBHOOK_URL=<your discord webhook url>
+export MSGBOT_TOKEN=<your discord bot token>
+nohup python msgbot.py &
+
