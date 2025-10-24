@@ -1,7 +1,7 @@
 # msgbot
 a bot for MeshCore and discord
 
-monitors Public and #test channels and posts messages to #msg-bot channel in discord
+monitors Public and #test channels on the mesh and posts messages to #msg-bot channel in discord
 
 listens for @[MSG Bot]\<command> or for \<command> in the #bot hashtag channel on the mesh
 
