@@ -12,8 +12,8 @@ from meshcore import MeshCore
 from meshcore import EventType
 import discord
 
-#set DEBUG=True to skip posting to discord
-DEBUG=False
+#set DEBUG_MESH=True to skip posting to discord
+DEBUG_MESH=False
 
 MESHCORE_HOSTNAME = os.getenv("MESHCORE_HOSTNAME")
 PORT = 5000
@@ -29,7 +29,7 @@ CHNL_IDX_BOT = 2 #bot
 
 CHNL_NAME_BOT = '#bot' # channel name for direct bot commands
 # in any channel, prefacing a message with BOT_MESH_USER sends a command to the bot
-if DEBUG:
+if DEBUG_MESH:
     BOT_MESH_USER = '@[msgbot]' # all lower case
 else:
     BOT_MESH_USER = '@[msg bot]' # all lower case
@@ -57,7 +57,7 @@ def _post_discord_webhook(url: str, content: str) -> None:
 
 
 async def send_to_discord(webhook_url: str, content: str) -> None:
-    if DEBUG:
+    if DEBUG_MESH:
         return
     
     try:
@@ -206,7 +206,7 @@ async def mesh_listener () :
 
             
 #testing
-if DEBUG:
+if DEBUG_MESH:
     asyncio.run(mesh_listener())
     sys.exit()
 
@@ -236,10 +236,10 @@ async def on_message(message):
 #        print(f"received {message.author}: {message.content}")
 
         if message.content.startswith('$pub'):
-            res = await mc.commands.send_chan_msg(CHNL_IDX_PUB,message.content[4:].lstrip())
+            res = await mc.commands.send_chan_msg(CHNL_IDX_PUB,f"[{message.author}]{message.content[4:].lstrip()}")
             print(res) # needs this or send flaky
         elif message.content.startswith('$test'):
-            res = await mc.commands.send_chan_msg(CHNL_IDX_TEST,message.content[5:].lstrip())
+            res = await mc.commands.send_chan_msg(CHNL_IDX_PUB,f"[{message.author}]{message.content[5:].lstrip()}")
             print(res) # needs this or send flaky
         elif message.content == "help":
             asyncio.create_task(help())
