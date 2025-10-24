@@ -19,7 +19,7 @@ MESHCORE_HOSTNAME = os.getenv("MESHCORE_HOSTNAME")
 PORT = 5000
 WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 MSGBOT_TOKEN = os.getenv("MSGBOT_TOKEN")
-DISCORD_CHANNEL_ID = os.getenv("DISCORD_CHANNEL_ID")
+DISCORD_CHANNEL_ID = int(os.getenv("DISCORD_CHANNEL_ID"))
 
 # these are just placeholders .. will be filled in by get_channels()
 CHNL_IDX_PUB = 0 # Public
@@ -235,12 +235,12 @@ async def on_message(message):
     if message.channel.id == DISCORD_CHANNEL_ID:
 #        print(f"received {message.author}: {message.content}")
 
-        # Example: Respond to a specific message
-        msg = None
         if message.content.startswith('$pub'):
-            await mc.commands.send_chan_msg(CHNL_IDX_PUB,message.content[4:].lstrip())
+            res = await mc.commands.send_chan_msg(CHNL_IDX_PUB,message.content[4:].lstrip())
+            print(res) # needs this or send flaky
         elif message.content.startswith('$test'):
-            await mc.commands.send_chan_msg(CHNL_IDX_TEST,message.content[5:].lstrip())
+            res = await mc.commands.send_chan_msg(CHNL_IDX_TEST,message.content[5:].lstrip())
+            print(res) # needs this or send flaky
         elif message.content == "help":
             asyncio.create_task(help())
 
