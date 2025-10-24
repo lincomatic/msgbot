@@ -1,0 +1,2 @@
+meshcore>=2.1.16
+discord>=2.3.2
