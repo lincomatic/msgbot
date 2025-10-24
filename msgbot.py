@@ -28,13 +28,14 @@ CHNL_IDX_TEST = 1 #test
 CHNL_IDX_BOT = 2 #bot
 
 
-CHNL_NAME_BOT = '#bot' # channel name for direct bot commands
 # in any channel, prefacing a message with BOT_MESH_USER sends a command to the bot
 if DEBUG_MESH:
-    BOT_MESH_USER = '@[msgbot]' # all lower case
+    BOT_MESH_USER = '@[msgbot' # all lower case
+    CHNL_NAME_BOT = '#crispr' # channel name for direct bot commands
 else:
-    BOT_MESH_USER = '@[msg bot]' # all lower case
-BOT_TEST_CHNL = '#crispr' # don't send messages from this chnl to discord
+    BOT_MESH_USER = '@[msg bot' # all lower case
+    CHNL_NAME_BOT = '#bot' # channel name for direct bot commands
+    BOT_TEST_CHNL = '#crispr' # don't send messages from this chnl to discord
 
 
 #globals
@@ -107,8 +108,11 @@ async def do_mesh_commands(payload,channel_idx,channel_name,user,msg):
     if channel_idx == CHNL_IDX_BOT:
         doit = True
     elif msg.lower().startswith(BOT_MESH_USER):
-        doit = True
-        msg = msg[10:]
+        sidx = msg.find(']')
+        if sidx > 0:
+            msg = msg[sidx+1:]
+            print(msg)
+            doit = True
 
     if doit:
         resp = None
