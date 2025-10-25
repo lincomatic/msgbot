@@ -14,7 +14,7 @@ from meshcore import EventType
 import discord
 
 #set DEBUG_MESH=True to skip posting to discord
-DEBUG_MESH=False
+DEBUG_MESH=os.getenv("DEBUG_MESH","False")
 
 MESHCORE_HOSTNAME = os.getenv("MESHCORE_HOSTNAME")
 PORT = 5000
@@ -28,15 +28,18 @@ CHNL_IDX_TEST = 1 #test
 CHNL_IDX_BOT = 2 #bot
 
 
+BOT_TEST_CHNL = '#crispr' # don't send messages from this chnl to discord
+
 # in any channel, prefacing a message with BOT_MESH_USER sends a command to the bot
-if DEBUG_MESH:
+if DEBUG_MESH == "True":
     BOT_MESH_USER = '@[msgbot' # all lower case
     CHNL_NAME_BOT = '#crispr' # channel name for direct bot commands
 else:
     BOT_MESH_USER = '@[msg bot' # all lower case
     CHNL_NAME_BOT = '#bot' # channel name for direct bot commands
-    BOT_TEST_CHNL = '#crispr' # don't send messages from this chnl to discord
 
+print(f"DEBUG_MESH={DEBUG_MESH}")    
+print(f"MESHCORE_HOSTNAME={MESHCORE_HOSTNAME}",flush=True)    
 
 #globals
 con = None
@@ -59,7 +62,7 @@ def _post_discord_webhook(url: str, content: str) -> None:
 
 
 async def send_to_discord(webhook_url: str, content: str) -> None:
-    if DEBUG_MESH:
+    if DEBUG_MESH == "True":
         return
     
     try:
@@ -125,8 +128,8 @@ async def do_mesh_commands(payload,channel_idx,channel_name,user,msg):
             hops = payload.get('path_len')
             text = payload.get('text')
             elapsed = round((time.time()-timestamp)*1000)
-#            resp = f"ack [{user}]{msg}|SNR:{snr}|hops:{hops}|{elapsed}ms"
-            resp = f"ack [{user}]{msg}|SNR:{snr}|hops:{hops}|{elapsed}ms"
+#            resp = f"ack {user}:{msg}|SNR:{snr}|hops:{hops}|{elapsed}ms"
+            resp = f"ack {user}:{msg}|hops:{hops}|{elapsed}ms"
             print(resp)
         elif cmd.startswith('magic8'):
             msg = magic8()
@@ -157,7 +160,7 @@ async def mesh_listener () :
         result = await mc.commands.get_msg()
         if result.type == EventType.NO_MORE_MSGS:
             # No messages currently; wait briefly and continue listening
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.1)
             continue
         elif result.type == EventType.ERROR:
             print(f"Error retrieving messages: {result.payload}")
@@ -218,7 +221,7 @@ async def mesh_listener () :
 
             
 #testing
-if DEBUG_MESH:
+if DEBUG_MESH == "True":
     asyncio.run(mesh_listener())
     sys.exit()
 
